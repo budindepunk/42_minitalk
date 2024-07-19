@@ -46,6 +46,8 @@ void	receive_len(int *flag, int signal, char **str)
 		*flag = 1;
 		printf("received len: %i\n", len);
 		*str = calloc((len + 1), sizeof(char));
+		info_received = 0;
+		len = 0;
 	}
 }
 
@@ -59,13 +61,9 @@ void	signal_handler(int signal)
 	static int	i;
 
 	if (!received_len_flag)
-	{
-		printf("came in here because len flag is %d\n", received_len_flag);
 		receive_len(&received_len_flag, signal, &str);
-	}
 	else
 	{
-		signals_received = 0;
 		if (signal == SIGUSR1 && received_len_flag)
 		{
 			char_received += 1 << signals_received;
