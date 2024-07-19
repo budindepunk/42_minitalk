@@ -6,7 +6,7 @@
 /*   By: csilva-r <csilva-r@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 20:39:03 by csilva-r          #+#    #+#             */
-/*   Updated: 2024/07/16 14:33:45 by csilva-r         ###   ########.fr       */
+/*   Updated: 2024/07/19 18:34:39 by csilva-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	ft_atoi(const char *nptr)
 
 int	ft_strlen(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i])
@@ -69,7 +69,7 @@ void	char_to_bit(char c, int pid)
 
 void	int_to_bit(int n, int pid)
 {
-	int i;
+	int	i;
 
 	i = 32;
 	while (--i >= 0)
@@ -104,4 +104,3 @@ int	main(int argc, char *argv[])
 		write(1, "please run ./client <PID> <MESSAGE>\n", 37);
 	return (0);
 }
-

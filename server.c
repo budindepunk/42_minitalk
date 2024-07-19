@@ -15,22 +15,45 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void	print_reset(char *str, int *signals_received, int *flag)
+void	ft_putnbr_fd(int n, int fd)
 {
-	int	i;
+	long	ln;
+	char	c;
 
-	printf("i am in print reset \n");
-	i = 0;
-	while (str[i])
+	ln = n;
+	if (ln < 0)
 	{
-		write(1, &str[i], 1);
-		i++;
+		write(1, "-", 1);
+		ln *= -1;
+	}
+	if (ln <= 9)
+	{
+		c = ln + '0';
+		write(1, &c, 1);
+	}
+	else
+	{
+		ft_putnbr_fd(ln / 10, fd);
+		ft_putnbr_fd(ln % 10, fd);
+	}
+}
+
+void	print_reset(char *str, int *signals_received, int *flag, int *i)
+{
+	int	j;
+
+	j = 0;
+	while (str[j])
+	{
+		write(1, &str[j], 1);
+		j++;
 	}
 	write(1, "\n", 1);
 	free(str);
 	str = NULL;
 	*flag = 0;
 	*signals_received = 0;
+	*i = 0;
 }
 
 void	receive_len(int *flag, int signal, char **str)
@@ -44,7 +67,6 @@ void	receive_len(int *flag, int signal, char **str)
 	if (info_received == 32)
 	{
 		*flag = 1;
-		printf("received len: %i\n", len);
 		*str = calloc((len + 1), sizeof(char));
 		info_received = 0;
 		len = 0;
@@ -69,10 +91,7 @@ void	signal_handler(int signal)
 		if (signals_received == 8 && len_flag)
 		{
 			if (char_received == 0)
-			{
-				i = 0;
-				return (print_reset(str, &signals_received, &len_flag));
-			}
+				return (print_reset(str, &signals_received, &len_flag, &i));
 			else
 			{
 				str[i++] = (char)char_received;
@@ -87,7 +106,9 @@ int	main(void)
 {
 	signal(SIGUSR1, signal_handler);
 	signal(SIGUSR2, signal_handler);
-	printf("my process ID is %i\n", getpid());
+	write(1, "my process ID is ", 17);
+	ft_putnbr_fd(getpid(), 1);
+	write(1, "\n", 1);
 	while (1)
 		pause();
 	return (0);
