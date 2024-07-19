@@ -6,7 +6,7 @@
 /*   By: csilva-r <csilva-r@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 20:39:03 by csilva-r          #+#    #+#             */
-/*   Updated: 2024/07/15 20:39:05 by csilva-r         ###   ########.fr       */
+/*   Updated: 2024/07/16 14:33:45 by csilva-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,6 @@ int	main(int argc, char *argv[])
 		char_to_bit('\0', pid);
 	}
 	else
-		printf("please run ./client <PID> <MESSAGE>\n");
+		write(1, "please run ./client <PID> <MESSAGE>\n", 37);
 	return (0);
 }
