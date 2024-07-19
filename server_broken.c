@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void	print_reset(char **str, int *signals_received, int *flag)
+void	print_reset(char *str, int *signals_received, int *flag)
 {
 	int	i;
 
@@ -24,6 +24,7 @@ void	print_reset(char **str, int *signals_received, int *flag)
 	while(str[i])
 	{
 		write(1, &str[i], 1);
+		i++;
 	}
 	write(1, "\n", 1);
 	free(str);
@@ -34,17 +35,17 @@ void	print_reset(char **str, int *signals_received, int *flag)
 
 void	receive_len(int *flag, int signal, char **str)
 {
+	static int	info_received;
 	static int	len;
-	static int	i;
 	
 	if (signal == SIGUSR1)
-		i += 1 << len;
-	len++;
-	if (len == 32)
+		len += 1 << info_received;
+	info_received++;
+	if (info_received == 32)
 	{
 		*flag = 1;
-		printf("received len: %i\n", i);
-		*str = malloc(sizeof(char) * (len + 1));
+		printf("received len: %i\n", len);
+		*str = calloc((len + 1), sizeof(char));
 	}
 }
 
@@ -62,26 +63,27 @@ void	signal_handler(int signal)
 		printf("came in here because len flag is %d\n", received_len_flag);
 		receive_len(&received_len_flag, signal, &str);
 	}
-	if (signal == SIGUSR1 && received_len_flag)
+	else
 	{
-		char_received += 1 << signals_received;
-	}
-	signals_received++;
-	if (signals_received == 8 && received_len_flag)
-	{
-		printf("received %d signals\n", signals_received);
-		if (char_received == 0)
-		{
-			printf("char received is 0\n");
-			return (print_reset(&str, &signals_received, &received_len_flag));
-		}
-		else
-		{
-			printf("received char %c\n", (char)char_received);
-			str[i++] = (char)char_received;
-			char_received = 0;
-		}
 		signals_received = 0;
+		if (signal == SIGUSR1 && received_len_flag)
+		{
+			char_received += 1 << signals_received;
+		}
+		signals_received++;
+		if (signals_received == 8 && received_len_flag)
+		{
+			if (char_received == 0)
+			{
+				return (print_reset(str, &signals_received, &received_len_flag));
+			}
+			else
+			{
+				str[i++] = (char)char_received;
+				char_received = 0;
+			}
+			signals_received = 0;
+		}
 	}
 }
 
